@@ -62,11 +62,11 @@
         <!-- RIGHT FLOWER -->
         <div class="flower-container">
             <div class="flower">
-                <div class="petal petal1" data-img="photo11.jpg"></div>
-                <div class="petal petal2" data-img="photo12.jpg"></div>
-                <div class="petal petal3" data-img="photo13.jpg"></div>
-                <div class="petal petal4" data-img="photo14.jpg"></div>
-                <div class="petal petal5" data-img="photo15.jpg"></div>
+                <div class="petal petal1" data-img="photo11.png"></div>
+                <div class="petal petal2" data-img="photo12.png"></div>
+                <div class="petal petal3" data-img="photo13.png"></div>
+                <div class="petal petal4" data-img="photo14.png"></div>
+                <div class="petal petal5" data-img="photo15.png"></div>
                 <div class="center"></div>
             </div>
         </div>
@@ -105,6 +105,22 @@
                     <img id="modalImage" src="" class="modal-img">
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- MINI GAME MODAL -->
+    <div id="miniGameModal" class="modal hidden">
+        <div class="minigame-container">
+            <h2 class="minigame-title">💖 LOVE CATCHER 💖</h2>
+            <p class="minigame-instructions">Catch 10 hearts to unlock the next flower!</p>
+            <div class="minigame-stats">
+                <div class="stat">Hearts: <span id="heartsCollected">0</span>/10</div>
+                <div class="stat">Time: <span id="gameTimer">30</span>s</div>
+            </div>
+            <div id="gameCanvas" class="game-canvas">
+                <div id="catcher" class="catcher">💝</div>
+            </div>
+            <div class="minigame-message hidden" id="gameMessage"></div>
         </div>
     </div>
 </div>

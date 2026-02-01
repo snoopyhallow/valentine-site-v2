@@ -8,6 +8,49 @@ const noMessage = document.getElementById("noMessage");
 let noClickCount = 0;
 let isDodging = false;
 
+// FLOWER PROGRESSION SYSTEM
+const flowerContainers = document.querySelectorAll('.flower-container');
+let currentFlowerIndex = 0; // Start with left flower (index 0)
+let completedFlowers = []; // Track which flowers are completed
+let openedPetals = [[], [], []]; // Track opened petals for each flower
+
+// Lock flowers 1 and 2 initially
+function initializeFlowers() {
+    flowerContainers.forEach((container, index) => {
+        if (index > 0) {
+            container.classList.add('flower-locked');
+        }
+    });
+}
+
+// Check if all petals in current flower are opened
+function checkFlowerCompletion(flowerIndex) {
+    const petalsInFlower = flowerContainers[flowerIndex].querySelectorAll('.petal');
+    return openedPetals[flowerIndex].length === petalsInFlower.length;
+}
+
+// Unlock next flower
+function unlockNextFlower() {
+    if (currentFlowerIndex < 2) {
+        currentFlowerIndex++;
+        flowerContainers[currentFlowerIndex].classList.remove('flower-locked');
+        
+        if (currentFlowerIndex === 2) {
+            // All flowers unlocked - show completion message
+            setTimeout(() => {
+                alert("🎉 All flowers unlocked! You can now view all photos anytime! 💖");
+            }, 500);
+        }
+    }
+}
+
+// Initialize flowers when love page loads
+setTimeout(() => {
+    if (!lovePage.classList.contains('hidden')) {
+        initializeFlowers();
+    }
+}, 100);
+
 /* NO BUTTON CLICKS */
 noBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -83,9 +126,10 @@ function dodge(e) {
         newY = Math.max(containerRect.top + noRect.height / 2 + padding, 
                        Math.min(containerRect.bottom - noRect.height / 2 - padding, newY));
 
-        noBtn.style.position = "absolute";
-        noBtn.style.left = (newX - containerRect.left - noRect.width / 2) + "px";
-        noBtn.style.top = (newY - containerRect.top - noRect.height / 2) + "px";
+        // NO button is already positioned absolutely, just update its position
+        noBtn.style.left = (newX - containerRect.left) + "px";
+        noBtn.style.top = (newY - containerRect.top) + "px";
+        noBtn.style.transform = "translate(-50%, -50%)";
         noBtn.style.transition = "left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
 
         setTimeout(() => {
@@ -103,7 +147,9 @@ yesBtn.addEventListener("click", () => {
     setTimeout(() => {
         landing.style.display = "none";
         lovePage.classList.remove("hidden");
+        music.volume = 0.5; // Set volume to 50%
         music.play();
+        initializeFlowers(); // Initialize flower locks
     }, 1000);
 });
 
@@ -128,8 +174,27 @@ let startY = 0;
 let translateX = 0;
 let translateY = 0;
 
-petals.forEach(petal => {
+petals.forEach((petal, globalIndex) => {
     petal.addEventListener('click', () => {
+        // Find which flower this petal belongs to
+        let flowerIndex = -1;
+        flowerContainers.forEach((container, idx) => {
+            if (container.contains(petal)) {
+                flowerIndex = idx;
+            }
+        });
+
+        // Check if this flower is locked
+        if (flowerContainers[flowerIndex].classList.contains('flower-locked')) {
+            return; // Don't open petal if flower is locked
+        }
+
+        // Track this petal as opened
+        const petalId = `${flowerIndex}-${globalIndex}`;
+        if (!openedPetals[flowerIndex].includes(petalId)) {
+            openedPetals[flowerIndex].push(petalId);
+        }
+
         const imgSrc = petal.getAttribute('data-img');
         modalImg.src = imgSrc;
         modalImg.classList.remove('revealed');
@@ -137,7 +202,7 @@ petals.forEach(petal => {
         modalImg.classList.add('zoom-1x');
         boxLid.classList.remove('opened');
         boxOpened = false;
-        zoomLevel = 0.24; // Start at 24%
+        zoomLevel = 0.24;
         zoomSlider.value = 24;
         zoomPercentageDisplay.textContent = '24%';
         updateLiquidFill(24);
@@ -145,9 +210,11 @@ petals.forEach(petal => {
         translateY = 0;
         modal.classList.remove('hidden');
         zoomControl.classList.add('hidden');
-        // Reset inline opacity to ensure image is hidden until box is opened
         modalImg.style.opacity = '0';
         modalImg.style.transform = 'scale(1) translate(0, 0)';
+
+        // Store current flower index for later check
+        modal.dataset.currentFlower = flowerIndex;
     });
 });
 
@@ -295,6 +362,8 @@ modalImg.addEventListener('touchend', () => {
 });
 
 closeBtn.addEventListener('click', () => {
+    const flowerIndex = parseInt(modal.dataset.currentFlower || '0');
+    
     modal.classList.add('hidden');
     zoomControl.classList.add('hidden');
     boxOpened = false;
@@ -308,6 +377,18 @@ closeBtn.addEventListener('click', () => {
     modalImg.classList.add('zoom-1x');
     modalImg.style.transform = 'scale(1) translate(0, 0)';
     modalImg.style.opacity = '1';
+
+    // Check if current flower is completed
+    if (checkFlowerCompletion(flowerIndex) && !completedFlowers.includes(flowerIndex)) {
+        completedFlowers.push(flowerIndex);
+        
+        // Show mini game if not the last flower or not all unlocked
+        if (flowerIndex < 2) {
+            setTimeout(() => {
+                startMiniGame();
+            }, 500);
+        }
+    }
 });
 
 // ESC key to close modal or reset zoom
@@ -326,6 +407,8 @@ document.addEventListener('keydown', (e) => {
             updateImageTransform();
         } else {
             // Second ESC or if already at 100%: close modal
+            const flowerIndex = parseInt(modal.dataset.currentFlower || '0');
+            
             modal.classList.add('hidden');
             zoomControl.classList.add('hidden');
             boxOpened = false;
@@ -339,6 +422,18 @@ document.addEventListener('keydown', (e) => {
             modalImg.classList.add('zoom-1x');
             modalImg.style.transform = 'scale(1) translate(0, 0)';
             modalImg.style.opacity = '1';
+
+            // Check if current flower is completed
+            if (checkFlowerCompletion(flowerIndex) && !completedFlowers.includes(flowerIndex)) {
+                completedFlowers.push(flowerIndex);
+                
+                // Show mini game if not the last flower
+                if (flowerIndex < 2) {
+                    setTimeout(() => {
+                        startMiniGame();
+                    }, 500);
+                }
+            }
         }
     }
 });
@@ -364,3 +459,192 @@ function floatEmoji(emoji) {
 setInterval(() => floatEmoji("❤️"), 400);
 setInterval(() => floatEmoji("🦋"), 1200);
 setInterval(() => floatEmoji("🌸"), 900);
+
+/* MINI GAME - LOVE CATCHER */
+const miniGameModal = document.getElementById('miniGameModal');
+const gameCanvas = document.getElementById('gameCanvas');
+const catcher = document.getElementById('catcher');
+const heartsCollectedEl = document.getElementById('heartsCollected');
+const gameTimerEl = document.getElementById('gameTimer');
+const gameMessageEl = document.getElementById('gameMessage');
+
+let gameActive = false;
+let heartsCollected = 0;
+let gameTimeLeft = 30;
+let gameInterval;
+let spawnInterval;
+let catcherX = 50; // percentage
+
+// Start mini game
+function startMiniGame() {
+    miniGameModal.classList.remove('hidden');
+    heartsCollected = 0;
+    gameTimeLeft = 30;
+    gameActive = true;
+    gameMessageEl.classList.add('hidden');
+    
+    heartsCollectedEl.textContent = '0';
+    gameTimerEl.textContent = '30';
+    
+    // Reset catcher position
+    catcherX = 50;
+    catcher.style.left = '50%';
+    
+    // Clear any existing falling items
+    document.querySelectorAll('.falling-item').forEach(item => item.remove());
+    
+    // Start game timer
+    gameInterval = setInterval(() => {
+        gameTimeLeft--;
+        gameTimerEl.textContent = gameTimeLeft;
+        
+        if (gameTimeLeft <= 0) {
+            endMiniGame(false);
+        }
+    }, 1000);
+    
+    // Start spawning items
+    spawnInterval = setInterval(spawnFallingItem, 800);
+}
+
+// Spawn falling items
+function spawnFallingItem() {
+    if (!gameActive) return;
+    
+    const item = document.createElement('div');
+    item.className = 'falling-item';
+    
+    // 80% hearts, 20% broken hearts (avoid these)
+    const isHeart = Math.random() > 0.2;
+    item.textContent = isHeart ? '💖' : '💔';
+    item.dataset.type = isHeart ? 'heart' : 'broken';
+    
+    // Random horizontal position
+    const randomX = Math.random() * 90 + 5; // 5% to 95%
+    item.style.left = randomX + '%';
+    
+    // Random fall duration
+    const duration = Math.random() * 2 + 3; // 3-5 seconds
+    item.style.animationDuration = duration + 's';
+    
+    gameCanvas.appendChild(item);
+    
+    // Check for collision
+    const collisionChecker = setInterval(() => {
+        if (!gameActive || !item.parentElement) {
+            clearInterval(collisionChecker);
+            return;
+        }
+        
+        checkCollision(item, collisionChecker);
+    }, 50);
+    
+    // Remove item after animation
+    setTimeout(() => {
+        if (item.parentElement) {
+            item.remove();
+        }
+        clearInterval(collisionChecker);
+    }, duration * 1000);
+}
+
+// Check collision between catcher and falling item
+function checkCollision(item, intervalId) {
+    const catcherRect = catcher.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    
+    const collision = !(
+        catcherRect.right < itemRect.left ||
+        catcherRect.left > itemRect.right ||
+        catcherRect.bottom < itemRect.top ||
+        catcherRect.top > itemRect.bottom
+    );
+    
+    if (collision) {
+        clearInterval(intervalId);
+        
+        if (item.dataset.type === 'heart') {
+            // Caught a heart!
+            heartsCollected++;
+            heartsCollectedEl.textContent = heartsCollected;
+            item.remove();
+            
+            // Check win condition
+            if (heartsCollected >= 10) {
+                endMiniGame(true);
+            }
+        } else {
+            // Caught a broken heart - lose 1 heart
+            heartsCollected = Math.max(0, heartsCollected - 1);
+            heartsCollectedEl.textContent = heartsCollected;
+            item.remove();
+        }
+    }
+}
+
+// End mini game
+function endMiniGame(won) {
+    gameActive = false;
+    clearInterval(gameInterval);
+    clearInterval(spawnInterval);
+    
+    // Remove all falling items
+    document.querySelectorAll('.falling-item').forEach(item => item.remove());
+    
+    if (won) {
+        gameMessageEl.textContent = '🎉 You Won! Next flower unlocked! 💖';
+        gameMessageEl.classList.remove('hidden');
+        
+        setTimeout(() => {
+            miniGameModal.classList.add('hidden');
+            unlockNextFlower();
+        }, 2000);
+    } else {
+        gameMessageEl.textContent = '⏰ Time\'s up! Try again!';
+        gameMessageEl.classList.remove('hidden');
+        
+        setTimeout(() => {
+            gameMessageEl.classList.add('hidden');
+            startMiniGame(); // Restart game
+        }, 2000);
+    }
+}
+
+// Move catcher with mouse
+gameCanvas.addEventListener('mousemove', (e) => {
+    if (!gameActive) return;
+    
+    const canvasRect = gameCanvas.getBoundingClientRect();
+    const x = e.clientX - canvasRect.left;
+    const percentage = (x / canvasRect.width) * 100;
+    
+    catcherX = Math.max(5, Math.min(95, percentage));
+    catcher.style.left = catcherX + '%';
+});
+
+// Move catcher with touch
+gameCanvas.addEventListener('touchmove', (e) => {
+    if (!gameActive) return;
+    e.preventDefault();
+    
+    const canvasRect = gameCanvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - canvasRect.left;
+    const percentage = (x / canvasRect.width) * 100;
+    
+    catcherX = Math.max(5, Math.min(95, percentage));
+    catcher.style.left = catcherX + '%';
+});
+
+// Move catcher with keyboard
+document.addEventListener('keydown', (e) => {
+    if (!gameActive) return;
+    
+    if (e.key === 'ArrowLeft') {
+        catcherX = Math.max(5, catcherX - 5);
+        catcher.style.left = catcherX + '%';
+    } else if (e.key === 'ArrowRight') {
+        catcherX = Math.min(95, catcherX + 5);
+        catcher.style.left = catcherX + '%';
+    }
+});
