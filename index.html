@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>For My Love 💖</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,6 +11,11 @@
 <!-- BACKGROUND MUSIC -->
 <audio id="bgMusic" loop>
     <source src="love.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CHEST OPENING MUSIC -->
+<audio id="chestMusic" loop>
+    <source src="lover.mp3" type="audio/mpeg">
 </audio>
 
 <!-- LANDING PAGE -->
@@ -26,49 +31,64 @@
 
 <!-- LOVE PAGE -->
 <div id="lovePage" class="hidden">
-    <h1 class="love-text">I love you endlessly 💕</h1>
+    <div class="love-page-content">
+        <h1 class="love-text">I love you both endlessly 💕</h1>
 
-    <p class="sub-text">
-        You are my happiness, my peace, and my forever.
-        Happy Valentine's Day 🌹
-    </p>
+        <p class="sub-text">
+            You are my foundation, my strength, and my inspiration.
+            Happy Valentine's Day 🌹
+        </p>
 
-    <!-- FLOWERS CONTAINER -->
-    <div class="flowers-wrapper">
-        <!-- LEFT FLOWER -->
-        <div class="flower-container">
-            <div class="flower">
-                <div class="petal petal1" data-img="photo6.png"></div>
-                <div class="petal petal2" data-img="photo7.png"></div>
-                <div class="petal petal3" data-img="photo8.jpg"></div>
-                <div class="petal petal4" data-img="photo9.jpg"></div>
-                <div class="petal petal5" data-img="photo10.jpg"></div>
-                <div class="center"></div>
+        <!-- FLOWERS CONTAINER -->
+        <div class="flowers-wrapper">
+            <!-- LEFT FLOWER -->
+            <div class="flower-container">
+                <div class="flower">
+                    <div class="petal petal1" data-img="photo6.png"></div>
+                    <div class="petal petal2" data-img="photo7.png"></div>
+                    <div class="petal petal3" data-img="photo8.png"></div>
+                    <div class="petal petal4" data-img="photo9.png"></div>
+                    <div class="petal petal5" data-img="photo10.png"></div>
+                    <div class="center"></div>
+                </div>
+            </div>
+
+            <!-- MIDDLE FLOWER (ORIGINAL) -->
+            <div class="flower-container">
+                <div class="flower">
+                    <div class="petal petal1" data-img="photo1.png"></div>
+                    <div class="petal petal2" data-img="photo2.png"></div>
+                    <div class="petal petal3" data-img="photo3.png"></div>
+                    <div class="petal petal4" data-img="photo4.png"></div>
+                    <div class="petal petal5" data-img="photo5.png"></div>
+                    <div class="center"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT FLOWER -->
+            <div class="flower-container">
+                <div class="flower">
+                    <div class="petal petal1" data-img="photo11.png"></div>
+                    <div class="petal petal2" data-img="photo12.png"></div>
+                    <div class="petal petal3" data-img="photo13.png"></div>
+                    <div class="petal petal4" data-img="photo14.png"></div>
+                    <div class="petal petal5" data-img="photo15.png"></div>
+                    <div class="center"></div>
+                </div>
             </div>
         </div>
 
-        <!-- MIDDLE FLOWER (ORIGINAL) -->
-        <div class="flower-container">
-            <div class="flower">
-                <div class="petal petal1" data-img="photo1.jpg"></div>
-                <div class="petal petal2" data-img="photo2.jpg"></div>
-                <div class="petal petal3" data-img="photo3.jpg"></div>
-                <div class="petal petal4" data-img="photo4.png"></div>
-                <div class="petal petal5" data-img="photo5.jpg"></div>
-                <div class="center"></div>
+        <!-- TREASURE CHEST -->
+        <div id="treasureChestContainer" class="treasure-chest-container treasure-locked">
+            <div class="treasure-chest" id="treasureChest">
+                <div class="chest-lid">
+                    <div class="chest-lock">🔒</div>
+                </div>
+                <div class="chest-bottom">
+                    <div class="chest-keyhole"></div>
+                </div>
             </div>
-        </div>
-
-        <!-- RIGHT FLOWER -->
-        <div class="flower-container">
-            <div class="flower">
-                <div class="petal petal1" data-img="photo11.png"></div>
-                <div class="petal petal2" data-img="photo12.png"></div>
-                <div class="petal petal3" data-img="photo13.png"></div>
-                <div class="petal petal4" data-img="photo14.png"></div>
-                <div class="petal petal5" data-img="photo15.png"></div>
-                <div class="center"></div>
-            </div>
+            <p class="chest-label">Secret Treasure 💝</p>
         </div>
     </div>
 
@@ -121,6 +141,51 @@
                 <div id="catcher" class="catcher">💝</div>
             </div>
             <div class="minigame-message hidden" id="gameMessage"></div>
+        </div>
+    </div>
+
+    <!-- SECRET MESSAGE MODAL -->
+    <div id="secretMessage" class="secret-message-modal hidden">
+        <div class="secret-close">×</div>
+        <div class="secret-content">
+            <div class="butterflies-container">
+                <span class="butterfly-float">🦋</span>
+                <span class="butterfly-float">🦋</span>
+                <span class="butterfly-float">🦋</span>
+                <span class="butterfly-float">🦋</span>
+                <span class="butterfly-float">🦋</span>
+                <span class="butterfly-float">🦋</span>
+            </div>
+            <div class="hearts-float-container">
+                <span class="heart-float">💖</span>
+                <span class="heart-float">💕</span>
+                <span class="heart-float">💗</span>
+                <span class="heart-float">💓</span>
+                <span class="heart-float">💝</span>
+                <span class="heart-float">❤️</span>
+                <span class="heart-float">💖</span>
+                <span class="heart-float">💕</span>
+            </div>
+            <div class="message-box">
+                <h1 class="message-title">To My Amazing Parents 💖</h1>
+                <div class="message-text">
+                    <p>Every day with you both feels like a blessing I can never take for granted.</p>
+                    
+                    <p>You are my foundation, my strength, my home. In a world full of chaos, you are my peace. In moments of doubt, you are my confidence.</p>
+                    
+                    <p>I am so incredibly grateful for every sacrifice you've made, every lesson you've taught me, every moment of love and support you've given. You make everything in life feel possible.</p>
+                    
+                    <p>I'm the luckiest person alive to have you both as my parents. Your wisdom guides my path, your love gives me courage, and your example makes me want to be the best version of myself.</p>
+                    
+                    <p>Thank you for choosing to be such wonderful parents, for believing in me, for being patient with me through all my mistakes, and for loving me unconditionally.</p>
+                    
+                    <p>I wish for a thousand more moments with you. I wish for endless laughter, countless memories, and a lifetime of making you proud.</p>
+                    
+                    <p>This isn't just gratitude for a moment, or appreciation for a season. This is forever. You and me. Always your child.</p>
+                    
+                    <p class="message-signature">I love you both more than words could ever express.<br>Today, tomorrow, and for all the days to come.<br><br>Forever grateful,<br>💝</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

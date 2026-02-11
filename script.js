@@ -3,6 +3,7 @@ const yesBtn = document.getElementById("yesBtn");
 const landing = document.getElementById("landing");
 const lovePage = document.getElementById("lovePage");
 const music = document.getElementById("bgMusic");
+const chestMusic = document.getElementById("chestMusic");
 const noMessage = document.getElementById("noMessage");
 
 let noClickCount = 0;
@@ -36,12 +37,30 @@ function unlockNextFlower() {
         flowerContainers[currentFlowerIndex].classList.remove('flower-locked');
         
         if (currentFlowerIndex === 2) {
-            // All flowers unlocked - show completion message
+            // All flowers unlocked - unlock the treasure chest!
             setTimeout(() => {
-                alert("🎉 All flowers unlocked! You can now view all photos anytime! 💖");
-            }, 500);
+                unlockTreasureChest();
+            }, 1500);
         }
     }
+}
+
+// Unlock treasure chest
+function unlockTreasureChest() {
+    const treasureContainer = document.getElementById('treasureChestContainer');
+    const treasureChest = document.getElementById('treasureChest');
+    
+    // Remove locked state
+    treasureContainer.classList.remove('treasure-locked');
+    treasureChest.classList.add('unlocked');
+    
+    // Play unlock animation
+    treasureChest.style.animation = 'treasureUnlock 1s ease';
+    
+    // Show sparkle effect or notification
+    setTimeout(() => {
+        alert('✨ The Secret Treasure has been unlocked! Click on it to reveal what\'s inside... 💖');
+    }, 1000);
 }
 
 // Initialize flowers when love page loads
@@ -69,19 +88,19 @@ noBtn.addEventListener("click", (e) => {
     
     if (noClickCount === 1) {
         noMessage.textContent = "Are you sure? 🥺";
-        noBtn.style.animation = "shake 1.2s";
+        noBtn.style.animation = "shake 1.5s";
         setTimeout(() => noBtn.style.animation = "", 500);
     } else if (noClickCount === 2) {
         noMessage.textContent = "Are you really sure about this? 😢";
-        noBtn.style.animation = "shake 1.2s";
+        noBtn.style.animation = "shake 1.5s";
         setTimeout(() => noBtn.style.animation = "", 500);
     } else if (noClickCount === 3) {
         noMessage.textContent = "Are you absolutely positive? 😭";
-        noBtn.style.animation = "shake 1.2s";
+        noBtn.style.animation = "shake 1.5s";
         setTimeout(() => noBtn.style.animation = "", 500);
     } else if (noClickCount === 4) {
         noMessage.textContent = "Final answer??? 😭";
-        noBtn.style.animation = "shake 1.2s";
+        noBtn.style.animation = "shake 1.5s";
         setTimeout(() => noBtn.style.animation = "", 500);     
     } else if (noClickCount === 5) {
         noMessage.textContent = "Fine, I give up… 💔 You leave me no choice.";
@@ -141,14 +160,34 @@ function dodge(e) {
 document.addEventListener("mousemove", dodge);
 document.addEventListener("touchmove", dodge);
 
-/* YES CLICK */
+/* YES CLICK - WITH MUSIC FADE IN */
 yesBtn.addEventListener("click", () => {
     landing.style.animation = "fadeOut 1s forwards";
     setTimeout(() => {
         landing.style.display = "none";
         lovePage.classList.remove("hidden");
-        music.volume = 0.5; // Set volume to 50%
+        
+        // Start music with fade in transition
+        music.volume = 0; // Start at 0
         music.play();
+        
+        // Fade in music over 3 seconds
+        let targetVolume = 0.5;
+        let currentVolume = 0;
+        let fadeInDuration = 3000; // 3 seconds
+        let fadeInSteps = 60; // 60 steps for smooth transition
+        let volumeIncrement = targetVolume / fadeInSteps;
+        let stepDuration = fadeInDuration / fadeInSteps;
+        
+        let fadeInInterval = setInterval(() => {
+            currentVolume += volumeIncrement;
+            if (currentVolume >= targetVolume) {
+                currentVolume = targetVolume;
+                clearInterval(fadeInInterval);
+            }
+            music.volume = currentVolume;
+        }, stepDuration);
+        
         initializeFlowers(); // Initialize flower locks
     }, 1000);
 });
@@ -165,6 +204,12 @@ const zoomControl = document.getElementById('zoomControl');
 const zoomSlider = document.getElementById('zoomSlider');
 const liquidFill = document.querySelector('.liquid-fill');
 const zoomPercentageDisplay = document.querySelector('.zoom-percentage');
+
+// SECRET MESSAGE ELEMENTS (declared here for ESC handler)
+const secretMessage = document.getElementById('secretMessage');
+const secretClose = document.querySelector('.secret-close');
+const treasureChest = document.getElementById('treasureChest');
+const chestLid = document.querySelector('.chest-lid');
 
 let boxOpened = false;
 let zoomLevel = 1; // Start at 1x (100%)
@@ -361,7 +406,44 @@ modalImg.addEventListener('touchend', () => {
     isPanning = false;
 });
 
-closeBtn.addEventListener('click', () => {
+closeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const flowerIndex = parseInt(modal.dataset.currentFlower || '0');
+    
+    modal.classList.add('hidden');
+    zoomControl.classList.add('hidden');
+    boxOpened = false;
+    zoomLevel = 1;
+    zoomSlider.value = 100;
+    zoomPercentageDisplay.textContent = '100%';
+    updateLiquidFill(100);
+    translateX = 0;
+    translateY = 0;
+    modalImg.classList.remove('zoom-1-5x');
+    modalImg.classList.add('zoom-1x');
+    modalImg.style.transform = 'scale(1) translate(0, 0)';
+    modalImg.style.opacity = '1';
+
+    // Check if current flower is completed
+    if (checkFlowerCompletion(flowerIndex) && !completedFlowers.includes(flowerIndex)) {
+        completedFlowers.push(flowerIndex);
+        
+        // Show mini game if not the last flower or not all unlocked
+        if (flowerIndex < 2) {
+            setTimeout(() => {
+                startMiniGame();
+            }, 500);
+        }
+    }
+});
+
+// Add touch support for close button on mobile
+closeBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     const flowerIndex = parseInt(modal.dataset.currentFlower || '0');
     
     modal.classList.add('hidden');
@@ -393,6 +475,19 @@ closeBtn.addEventListener('click', () => {
 
 // ESC key to close modal or reset zoom
 document.addEventListener('keydown', (e) => {
+    // Check if secret message is open first (highest priority)
+    if (e.key === 'Escape' && !secretMessage.classList.contains('hidden')) {
+        secretMessage.classList.add('hidden');
+        
+        // Close chest lid
+        chestLid.classList.remove('opened');
+        
+        // Switch back to background music with fade
+        switchToBackgroundMusic();
+        return; // Exit early to prevent other handlers
+    }
+    
+    // Then check if image modal is open
     if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
         if (zoomLevel !== 1) {
             // First ESC: reset zoom to 100%
@@ -647,4 +742,131 @@ document.addEventListener('keydown', (e) => {
         catcherX = Math.min(95, catcherX + 5);
         catcher.style.left = catcherX + '%';
     }
+});
+
+/* MUSIC SWITCHING FUNCTIONS */
+function switchToChestMusic() {
+    // Fade out background music
+    let fadeOutDuration = 1500; // 1.5 seconds
+    let fadeOutSteps = 30;
+    let currentBgVolume = music.volume;
+    let volumeDecrement = currentBgVolume / fadeOutSteps;
+    let stepDuration = fadeOutDuration / fadeOutSteps;
+    
+    let fadeOutInterval = setInterval(() => {
+        currentBgVolume -= volumeDecrement;
+        if (currentBgVolume <= 0) {
+            currentBgVolume = 0;
+            music.volume = 0;
+            music.pause();
+            clearInterval(fadeOutInterval);
+            
+            // Start chest music at 0:41 seconds with fade in
+            chestMusic.currentTime = 41; // Start at 41 seconds (0:41)
+            chestMusic.volume = 0;
+            chestMusic.play();
+            
+            let targetVolume = 0.4; // Slightly quieter for dramatic effect
+            let currentVolume = 0;
+            let fadeInDuration = 2000; // 2 seconds
+            let fadeInSteps = 40;
+            let volumeIncrement = targetVolume / fadeInSteps;
+            let stepDuration = fadeInDuration / fadeInSteps;
+            
+            let fadeInInterval = setInterval(() => {
+                currentVolume += volumeIncrement;
+                if (currentVolume >= targetVolume) {
+                    currentVolume = targetVolume;
+                    clearInterval(fadeInInterval);
+                }
+                chestMusic.volume = currentVolume;
+            }, stepDuration);
+        } else {
+            music.volume = currentBgVolume;
+        }
+    }, stepDuration);
+}
+
+function switchToBackgroundMusic() {
+    // Fade out chest music
+    let fadeOutDuration = 1500; // 1.5 seconds
+    let fadeOutSteps = 30;
+    let currentChestVolume = chestMusic.volume;
+    let volumeDecrement = currentChestVolume / fadeOutSteps;
+    let stepDuration = fadeOutDuration / fadeOutSteps;
+    
+    let fadeOutInterval = setInterval(() => {
+        currentChestVolume -= volumeDecrement;
+        if (currentChestVolume <= 0) {
+            currentChestVolume = 0;
+            chestMusic.volume = 0;
+            chestMusic.pause();
+            clearInterval(fadeOutInterval);
+            
+            // Resume background music with fade in
+            music.volume = 0;
+            music.play();
+            
+            let targetVolume = 0.5;
+            let currentVolume = 0;
+            let fadeInDuration = 2000; // 2 seconds
+            let fadeInSteps = 40;
+            let volumeIncrement = targetVolume / fadeInSteps;
+            let stepDuration = fadeInDuration / fadeInSteps;
+            
+            let fadeInInterval = setInterval(() => {
+                currentVolume += volumeIncrement;
+                if (currentVolume >= targetVolume) {
+                    currentVolume = targetVolume;
+                    clearInterval(fadeInInterval);
+                }
+                music.volume = currentVolume;
+            }, stepDuration);
+        } else {
+            chestMusic.volume = currentChestVolume;
+        }
+    }, stepDuration);
+}
+
+/* SECRET MESSAGE FEATURE */
+// Open treasure chest and show secret message
+treasureChest.addEventListener('click', () => {
+    // Only open if unlocked
+    if (treasureChest.classList.contains('unlocked')) {
+        // Open the chest lid
+        chestLid.classList.add('opened');
+        
+        // Switch to chest music
+        switchToChestMusic();
+        
+        // Show secret message after chest opens
+        setTimeout(() => {
+            secretMessage.classList.remove('hidden');
+        }, 800);
+    }
+});
+
+// Close secret message
+secretClose.addEventListener('click', () => {
+    secretMessage.classList.add('hidden');
+    
+    // Close chest lid
+    chestLid.classList.remove('opened');
+    
+    // Switch back to background music
+    switchToBackgroundMusic();
+});
+
+// Add touch support for secret close button on mobile
+secretClose.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    secretMessage.classList.add('hidden');
+    
+    // Close chest lid
+    chestLid.classList.remove('opened');
+    
+    // Switch back to background music
+    switchToBackgroundMusic();
 });

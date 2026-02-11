@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+html {
+    scroll-behavior: smooth;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,7 +12,7 @@
 }
 
 body {
-    height: 100vh;
+    min-height: 100vh;
     background: 
         repeating-linear-gradient(
             0deg,
@@ -53,6 +57,7 @@ body::before {
     text-align: center;
     z-index: 10;
     position: relative;
+    padding: 20px;
 }
 
 #landing h1 {
@@ -78,10 +83,10 @@ body::before {
 }
 
 #noMessage {
-    font-size: 0.9rem;
+    font-size: 1.8rem;
     color: #ff6b9d;
     margin-bottom: 15px;
-    min-height: 60px;
+    min-height: 120px;
     font-weight: bold;
     text-shadow: 2px 2px 0px #c44569;
     line-height: 1.6;
@@ -162,11 +167,29 @@ button:active {
 }
 
 #lovePage {
+    width: 100%;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 5;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#lovePage::-webkit-scrollbar {
+    display: none;
+}
+
+.love-page-content {
     text-align: center;
     color: white;
     animation: fadeIn 2s ease;
-    position: relative;
-    z-index: 5;
+    padding: 40px 20px 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .love-text {
@@ -177,29 +200,165 @@ button:active {
         -2px -2px 0px rgba(255, 105, 180, 0.9);
     letter-spacing: 3px;
     line-height: 1.8;
+    margin-bottom: 20px;
 }
 
 .sub-text {
     font-size: 0.8rem;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-bottom: 40px;
     text-shadow: 2px 2px 0px #c44569;
     line-height: 1.8;
     letter-spacing: 1px;
+    max-width: 90%;
 }
 
-/* FLOWERS WRAPPER */
 .flowers-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 100px;
-    margin-top: 50px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 20px;
+}
+
+/* TREASURE CHEST */
+.treasure-chest-container {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    animation: fadeIn 1.5s ease;
+}
+
+.treasure-chest {
+    width: 200px;
+    height: 150px;
+    margin: 0 auto;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.treasure-chest:hover {
+    transform: scale(1.05);
+}
+
+.treasure-locked .treasure-chest {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(80%);
+}
+
+.treasure-locked .treasure-chest:hover {
+    transform: scale(1);
+}
+
+.chest-bottom {
+    width: 100%;
+    height: 100px;
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            #8B4513 0px,
+            #8B4513 16px,
+            #A0522D 16px,
+            #A0522D 32px
+        );
+    border: 6px solid #000;
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    box-shadow: 
+        6px 6px 0px #000,
+        inset -4px -4px 0px rgba(0, 0, 0, 0.4);
+}
+
+.chest-lid {
+    width: 100%;
+    height: 80px;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #A0522D 0px,
+            #A0522D 16px,
+            #CD853F 16px,
+            #CD853F 32px
+        );
+    border: 6px solid #000;
+    border-radius: 0;
+    position: absolute;
+    top: 0;
+    box-shadow: 
+        6px 6px 0px #000,
+        inset -4px -4px 0px rgba(0, 0, 0, 0.4);
+    transform-origin: bottom center;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.chest-lid.opened {
+    transform: rotateX(-110deg);
+}
+
+.chest-lock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    filter: drop-shadow(3px 3px 0px #000);
+    transition: opacity 0.5s ease;
+}
+
+.treasure-chest.unlocked .chest-lock {
+    opacity: 0;
+}
+
+.chest-keyhole {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 30px;
+    background: #000;
+    border-radius: 50% 50% 0 0;
+    box-shadow: inset 0 2px 0 rgba(255, 215, 0, 0.3);
+}
+
+.chest-keyhole::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 12px;
+    background: #000;
+}
+
+.chest-label {
+    margin-top: 15px;
+    font-size: 0.8rem;
+    color: #ff6b9d;
+    text-shadow: 2px 2px 0px #000;
+    letter-spacing: 1px;
+}
+
+.treasure-locked .chest-label::after {
+    content: ' 🔒';
+}
+
+.treasure-chest.unlocked .chest-label {
+    animation: pixelPulse 2s infinite;
 }
 
 /* FLOWER */
 .flower-container {
     perspective: 1000px;
+    margin: 20px 0;
 }
 
 .flower {
@@ -269,7 +428,6 @@ button:active {
         inset -2px -2px 0px rgba(0, 0, 0, 0.3);
 }
 
-/* FLOWER PETALS - REALISTIC POSITION */
 .petal1 {
     transform: translate(-50%, -50%) rotate(0deg) translateY(-120px);
     animation: petalAppear 0.8s ease 0.2s forwards;
@@ -402,6 +560,7 @@ button:active {
     position: relative;
 }
 
+/* FIXED: HIGH QUALITY IMAGE RENDERING - NO MORE PIXELATION */
 .modal-img {
     max-width: 90%;
     max-height: 90%;
@@ -417,8 +576,17 @@ button:active {
     position: relative;
     user-select: none;
     -webkit-user-drag: none;
-    image-rendering: auto;
+    
+    /* HIGH QUALITY RENDERING - PREVENTS PIXELATION */
     image-rendering: -webkit-optimize-contrast;
+    image-rendering: high-quality;
+    -ms-interpolation-mode: bicubic;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform-origin: center center;
+    will-change: transform;
 }
 
 .modal-img.revealed {
@@ -461,6 +629,11 @@ button:active {
     transition: color 0.3s, transform 0.1s;
     z-index: 1001;
     text-shadow: 3px 3px 0px #000;
+    padding: 10px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    pointer-events: auto;
 }
 
 .close:hover {
@@ -668,7 +841,6 @@ button:active {
     letter-spacing: 1px;
 }
 
-/* FLOATING EMOJIS */
 span {
     pointer-events: none;
 }
@@ -676,6 +848,275 @@ span {
 .butterfly {
     display: inline-block;
     animation: pixelFlutter 2s ease-in-out infinite;
+}
+
+/* SECRET MESSAGE STYLES */
+.secret-message-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 25%, #4a2545 50%, #6b3654 75%, #8b4a63 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.secret-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.butterflies-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.butterfly-float {
+    position: absolute;
+    font-size: 2.5rem;
+    pointer-events: none;
+    animation: butterflyFloat 15s infinite ease-in-out;
+    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.3));
+}
+
+.butterfly-float:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 12s;
+}
+
+.butterfly-float:nth-child(2) {
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+    animation-duration: 14s;
+}
+
+.butterfly-float:nth-child(3) {
+    top: 60%;
+    left: 5%;
+    animation-delay: 4s;
+    animation-duration: 13s;
+}
+
+.butterfly-float:nth-child(4) {
+    top: 70%;
+    right: 10%;
+    animation-delay: 1s;
+    animation-duration: 15s;
+}
+
+.butterfly-float:nth-child(5) {
+    top: 40%;
+    left: 20%;
+    animation-delay: 3s;
+    animation-duration: 11s;
+}
+
+.butterfly-float:nth-child(6) {
+    top: 50%;
+    right: 25%;
+    animation-delay: 5s;
+    animation-duration: 16s;
+}
+
+.hearts-float-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.heart-float {
+    position: absolute;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: heartFloat 8s infinite ease-in-out;
+    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.3));
+}
+
+.heart-float:nth-child(1) {
+    left: 5%;
+    animation-delay: 0s;
+    animation-duration: 7s;
+}
+
+.heart-float:nth-child(2) {
+    left: 15%;
+    animation-delay: 1.5s;
+    animation-duration: 8s;
+}
+
+.heart-float:nth-child(3) {
+    left: 30%;
+    animation-delay: 3s;
+    animation-duration: 6.5s;
+}
+
+.heart-float:nth-child(4) {
+    left: 50%;
+    animation-delay: 0.5s;
+    animation-duration: 7.5s;
+}
+
+.heart-float:nth-child(5) {
+    left: 65%;
+    animation-delay: 2s;
+    animation-duration: 8.5s;
+}
+
+.heart-float:nth-child(6) {
+    left: 75%;
+    animation-delay: 4s;
+    animation-duration: 7s;
+}
+
+.heart-float:nth-child(7) {
+    left: 85%;
+    animation-delay: 1s;
+    animation-duration: 6s;
+}
+
+.heart-float:nth-child(8) {
+    left: 95%;
+    animation-delay: 2.5s;
+    animation-duration: 8s;
+}
+
+.message-box {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            rgba(45, 27, 61, 0.95) 0px,
+            rgba(45, 27, 61, 0.95) 16px,
+            rgba(74, 37, 69, 0.95) 16px,
+            rgba(74, 37, 69, 0.95) 32px
+        );
+    border: 6px solid #000;
+    padding: 40px;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 
+        8px 8px 0px #000,
+        inset -4px -4px 0px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    position: relative;
+    animation: messageAppear 1.5s ease;
+}
+
+.message-box::-webkit-scrollbar {
+    width: 12px;
+}
+
+.message-box::-webkit-scrollbar-track {
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            #1a0a2e 0px,
+            #1a0a2e 4px,
+            #16082a 4px,
+            #16082a 8px
+        );
+    border: 2px solid #000;
+}
+
+.message-box::-webkit-scrollbar-thumb {
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            #ff6b9d 0px,
+            #ff6b9d 4px,
+            #ff1744 4px,
+            #ff1744 8px
+        );
+    border: 2px solid #000;
+}
+
+.message-title {
+    font-size: 2rem;
+    color: #fff;
+    text-align: center;
+    text-shadow: 
+        4px 4px 0px #ff1744,
+        -2px -2px 0px rgba(255, 105, 180, 0.8);
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    line-height: 1.8;
+    animation: pixelPulse 3s infinite;
+}
+
+.message-text {
+    color: #fff;
+    font-size: 0.7rem;
+    line-height: 2;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.message-text p {
+    margin-bottom: 25px;
+    animation: fadeInUp 1s ease;
+    animation-fill-mode: both;
+}
+
+.message-text p:nth-child(1) { animation-delay: 0.2s; }
+.message-text p:nth-child(2) { animation-delay: 0.4s; }
+.message-text p:nth-child(3) { animation-delay: 0.6s; }
+.message-text p:nth-child(4) { animation-delay: 0.8s; }
+.message-text p:nth-child(5) { animation-delay: 1s; }
+.message-text p:nth-child(6) { animation-delay: 1.2s; }
+.message-text p:nth-child(7) { animation-delay: 1.4s; }
+.message-text p:nth-child(8) { animation-delay: 1.6s; }
+
+.message-signature {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #ff6b9d;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 4px solid #000;
+    text-shadow: 2px 2px 0px #000;
+    font-style: italic;
+}
+
+.secret-close {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    color: #fff;
+    font-size: 3rem;
+    cursor: pointer;
+    z-index: 2001;
+    text-shadow: 3px 3px 0px #000;
+    transition: color 0.3s, transform 0.1s;
+    padding: 10px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.secret-close:hover {
+    color: #ff6b9d;
+    transform: scale(1.1);
+}
+
+.secret-close:active {
+    transform: scale(0.95);
 }
 
 /* MINI GAME STYLES */
@@ -963,83 +1404,211 @@ span {
     }
 }
 
-/* MOBILE */
+@keyframes butterflyFloat {
+    0%, 100% {
+        transform: translate(0, 0) rotateY(0deg) rotateZ(-5deg);
+    }
+    25% {
+        transform: translate(50px, -30px) rotateY(180deg) rotateZ(5deg);
+    }
+    50% {
+        transform: translate(30px, 40px) rotateY(360deg) rotateZ(-5deg);
+    }
+    75% {
+        transform: translate(-40px, -20px) rotateY(180deg) rotateZ(5deg);
+    }
+}
+
+@keyframes heartFloat {
+    0% {
+        bottom: -50px;
+        opacity: 0;
+        transform: translateX(0) rotate(0deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        bottom: 110vh;
+        opacity: 0;
+        transform: translateX(30px) rotate(360deg);
+    }
+}
+
+@keyframes secretAppear {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes messageAppear {
+    from {
+        transform: scale(0.8) translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes treasureUnlock {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
+    body {
+        min-height: 100vh;
+        height: auto;
+    }
+
+    #landing {
+        padding: 20px 15px;
+    }
+
     #landing h1 {
-        font-size: 1.2rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
     }
 
     #landing h2 {
-        font-size: 1rem;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
     }
 
     #noMessage {
-        font-size: 0.7rem;
-        line-height: 1.6;
+        font-size: 1.2rem;
+        line-height: 1.5;
+        min-height: 100px;
     }
 
     .love-text {
-        font-size: 1.3rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        padding: 0 10px;
     }
 
     .sub-text {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
     }
 
     .flowers-wrapper {
         flex-direction: column;
-        gap: 50px;
+        gap: 30px;
+        margin: 20px 0;
+        padding: 0 10px;
+    }
+
+    .flower-container {
+        margin: 15px 0;
     }
 
     .flower {
-        width: 300px;
-        height: 300px;
+        width: 250px;
+        height: 250px;
+    }
+
+    .center {
+        width: 50px;
+        height: 50px;
     }
 
     .petal {
-        width: 90px;
-        height: 140px;
+        width: 75px;
+        height: 115px;
     }
 
-    .petal1 { transform: translate(-50%, -50%) rotate(0deg) translateY(-90px); }
-    .petal2 { transform: translate(-50%, -50%) rotate(72deg) translateY(-90px); }
-    .petal3 { transform: translate(-50%, -50%) rotate(144deg) translateY(-90px); }
-    .petal4 { transform: translate(-50%, -50%) rotate(216deg) translateY(-90px); }
-    .petal5 { transform: translate(-50%, -50%) rotate(288deg) translateY(-90px); }
+    .petal1 { transform: translate(-50%, -50%) rotate(0deg) translateY(-75px); }
+    .petal2 { transform: translate(-50%, -50%) rotate(72deg) translateY(-75px); }
+    .petal3 { transform: translate(-50%, -50%) rotate(144deg) translateY(-75px); }
+    .petal4 { transform: translate(-50%, -50%) rotate(216deg) translateY(-75px); }
+    .petal5 { transform: translate(-50%, -50%) rotate(288deg) translateY(-75px); }
+
+    .flower-locked::after {
+        font-size: 2.5rem;
+    }
 
     .button-container {
         gap: 20px;
-        height: 180px;
+        height: 150px;
+        flex-wrap: wrap;
     }
 
     button {
-        padding: 12px 30px;
+        padding: 12px 25px;
         font-size: 0.7rem;
     }
 
     .chocolate-box {
-        width: 300px;
-        height: 300px;
+        width: 280px;
+        height: 280px;
+    }
+
+    .box-lid::before {
+        font-size: 2rem;
     }
 
     .close {
-        right: 20px;
-        top: 20px;
+        right: 15px;
+        top: 15px;
         font-size: 2rem;
+        padding: 15px;
+        min-width: 50px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    /* Mobile zoom control - compact top right position */
     .zoom-control {
         left: auto;
-        right: 10px;
+        right: 15px;
         top: 80px;
         transform: none;
-        bottom: auto;
     }
 
     .potion-bottle {
-        width: 90px;
-        padding: 10px;
+        width: 100px;
+        padding: 12px;
     }
 
     .potion-label {
@@ -1049,28 +1618,28 @@ span {
     }
 
     .zoom-percentage {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         margin-bottom: 8px;
     }
 
     .potion-liquid {
-        width: 60px;
-        height: 80px;
-        margin-bottom: 10px;
+        width: 65px;
+        height: 90px;
+        margin-bottom: 12px;
     }
 
     .zoom-slider {
-        height: 8px;
+        height: 10px;
     }
 
     .zoom-slider::-webkit-slider-thumb {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
     }
 
     .zoom-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
     }
 
     .zoom-labels {
@@ -1083,30 +1652,33 @@ span {
         height: 6px;
     }
 
-    /* Mini game mobile styles */
     .minigame-container {
-        padding: 15px;
+        padding: 20px 15px;
+        width: 95%;
     }
 
     .minigame-title {
-        font-size: 1rem;
-        line-height: 1.6;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
     }
 
     .minigame-instructions {
         font-size: 0.5rem;
         margin-bottom: 15px;
+        line-height: 1.5;
     }
 
     .minigame-stats {
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
         margin-bottom: 15px;
     }
 
     .stat {
-        font-size: 0.6rem;
-        padding: 8px 15px;
+        font-size: 0.55rem;
+        padding: 8px 12px;
+        flex: 1;
     }
 
     .game-canvas {
@@ -1114,20 +1686,43 @@ span {
     }
 
     .catcher {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
 
     .falling-item {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
 
     .minigame-message {
         font-size: 0.6rem;
-        padding: 10px;
+        padding: 12px;
+        line-height: 1.5;
     }
 
-    .flower-locked::after {
-        font-size: 3rem;
+    .treasure-chest-container {
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+
+    .treasure-chest {
+        width: 150px;
+        height: 120px;
+    }
+
+    .chest-bottom {
+        height: 80px;
+    }
+
+    .chest-lid {
+        height: 60px;
+    }
+
+    .chest-lock {
+        font-size: 2.5rem;
+    }
+
+    .chest-label {
+        font-size: 0.6rem;
     }
     
     @keyframes slideInLeft {
@@ -1139,5 +1734,129 @@ span {
             transform: translateX(0);
             opacity: 1;
         }
+    }
+
+    .secret-message-modal {
+        padding: 15px;
+    }
+
+    .message-box {
+        padding: 25px 20px;
+        max-width: 95%;
+        max-height: 80vh;
+    }
+
+    .message-title {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .message-text {
+        font-size: 0.5rem;
+        line-height: 1.8;
+    }
+
+    .message-text p {
+        margin-bottom: 18px;
+    }
+
+    .message-signature {
+        font-size: 0.55rem;
+        margin-top: 25px;
+        padding-top: 20px;
+    }
+
+    .secret-close {
+        font-size: 2rem;
+        right: 15px;
+        top: 15px;
+        padding: 15px;
+        min-width: 50px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .butterfly-float {
+        font-size: 1.8rem;
+    }
+
+    .heart-float {
+        font-size: 1.2rem;
+    }
+
+    #lovePage {
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .love-page-content {
+        padding: 30px 15px 80px;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 380px) {
+    #landing h1 {
+        font-size: 0.85rem;
+    }
+
+    #landing h2 {
+        font-size: 0.7rem;
+    }
+
+    #noMessage {
+        font-size: 1rem;
+        min-height: 90px;
+    }
+
+    .love-text {
+        font-size: 0.85rem;
+    }
+
+    .sub-text {
+        font-size: 0.5rem;
+    }
+
+    .flower {
+        width: 220px;
+        height: 220px;
+    }
+
+    .petal {
+        width: 65px;
+        height: 100px;
+    }
+
+    .petal1 { transform: translate(-50%, -50%) rotate(0deg) translateY(-65px); }
+    .petal2 { transform: translate(-50%, -50%) rotate(72deg) translateY(-65px); }
+    .petal3 { transform: translate(-50%, -50%) rotate(144deg) translateY(-65px); }
+    .petal4 { transform: translate(-50%, -50%) rotate(216deg) translateY(-65px); }
+    .petal5 { transform: translate(-50%, -50%) rotate(288deg) translateY(-65px); }
+
+    .chocolate-box {
+        width: 240px;
+        height: 240px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 0.6rem;
+    }
+
+    .minigame-title {
+        font-size: 0.75rem;
+    }
+
+    .message-title {
+        font-size: 0.85rem;
+    }
+
+    .message-text {
+        font-size: 0.45rem;
     }
 }
